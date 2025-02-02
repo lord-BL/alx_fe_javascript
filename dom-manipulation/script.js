@@ -44,7 +44,7 @@ const quotes = [
 const showRandomQuote = () => {
   for (let index = 0; index < 1; index++) {
     let randomnIndex = Math.floor(Math.random() * quotes.length);
-    document.getElementById("quoteDisplay").textContent =
+    document.getElementById("quoteDisplay").innerHTML =
       quotes[randomnIndex].text;
   }
 };
