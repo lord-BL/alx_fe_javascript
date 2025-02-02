@@ -101,6 +101,62 @@ const showRandomQuote = () => {
   console.log(randomValue); // Optional: To check the random value generated
 };
 
+// Simulate fetching quotes from a server
+const fetchQuotesFromServer = async () => {
+  try {
+    const response = await fetch("https://jsonplaceholder.typicode.com/posts"); // Simulated server
+    const serverQuotes = await response.json();
+
+    // Assume server provides quote text, we'll mock categories for simplicity
+    const serverData = serverQuotes.slice(0, 5).map((quote, index) => ({
+      text: quote.title,
+      category: index % 2 === 0 ? "motivation" : "inspiration",
+    }));
+
+    handleDataSync(serverData);
+  } catch (error) {
+    console.error("Error fetching data from server:", error);
+  }
+};
+
+// Sync local data with server data and handle conflicts
+const handleDataSync = (serverData) => {
+  const conflicts = [];
+  const updatedQuotes = [...quotes];
+
+  // Check for conflicts between local and server data
+  serverData.forEach((serverQuote) => {
+    const localQuote = updatedQuotes.find(
+      (local) => local.text === serverQuote.text
+    );
+    if (localQuote) {
+      // Conflict detected: server's data will take precedence
+      conflicts.push(serverQuote.text);
+      const index = updatedQuotes.indexOf(localQuote);
+      updatedQuotes[index] = serverQuote;
+    } else {
+      updatedQuotes.push(serverQuote);
+    }
+  });
+
+  // Update local storage with merged data
+  quotes.length = 0;
+  quotes.push(...updatedQuotes);
+  saveQuotes();
+
+  // Notify user if conflicts were resolved
+  if (conflicts.length > 0) {
+    alert(
+      `Conflicts resolved. Server's data took precedence for the following quotes: ${conflicts.join(
+        ", "
+      )}`
+    );
+  }
+};
+
+// Periodically fetch data from the server every 5 minutes
+setInterval(fetchQuotesFromServer, 5 * 60 * 1000);
+
 newQuote.addEventListener("click", showRandomQuote);
 
 document.getElementById("addQuoteButton").addEventListener("click", () => {
@@ -157,4 +213,5 @@ importFile.addEventListener("change", (event) => {
 window.onload = () => {
   populateCategories();
   showRandomQuote();
+  fetchQuotesFromServer(); // Fetch initial data from the server
 };
