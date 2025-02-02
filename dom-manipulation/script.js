@@ -55,7 +55,7 @@ const populateCategories = () => {
   categories.forEach((category) => {
     const option = document.createElement("option");
     option.value = category;
-    option.innerText = category.charAt(0).toUpperCase() + category.slice(1);
+    option.textContent = category.charAt(0).toUpperCase() + category.slice(1);
     categoryFilter.appendChild(option);
   });
 
