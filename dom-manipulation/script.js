@@ -152,6 +152,9 @@ const syncQuotes = (serverData) => {
       )}`
     );
   }
+
+  // Show success message indicating that quotes have been synced with the server
+  alert("Quotes synced with server!"); // Display the required message
 };
 
 // POST request to send new quotes to the server
