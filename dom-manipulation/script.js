@@ -41,24 +41,42 @@ const quotes = [
     category: "success",
   },
 ];
+
 const showRandomQuote = () => {
-  for (let index = 0; index < 1; index++) {
-    let randomnIndex = Math.floor(Math.random() * quotes.length);
-    document.getElementById("quoteDisplay").innerHTML =
-      quotes[randomnIndex].text;
-  }
+  let randomIndex = Math.floor(Math.random() * quotes.length);
+  let quoteDisplay = document.getElementById("quoteDisplay");
+  quoteDisplay.innerHTML = "";
+
+  let quoteElement = document.createElement("p");
+  quoteElement.innerHTML = quotes[randomIndex].text;
+  quoteDisplay.appendChild(quoteElement);
 };
+
 newQuote.addEventListener("click", showRandomQuote);
+
 const createAddQuoteForm = () => {
   let getQuotes = document.getElementById("textarea");
   let quote = getQuotes.value.trim();
+  let quoteDisplay = document.getElementById("quoteDisplay");
+
   if (quote) {
-    // Ensure the input is not empty
-    quotes.push({ text: quote, category: "custom" }); // Add the new quote to the array
-    getQuotes.value = ""; // Clear input field
-    alert("Quote added successfully!");
+    quotes.push({ text: quote, category: "custom" });
+    getQuotes.value = "";
+
+    let successMessage = document.createElement("p");
+    successMessage.innerHTML = "Quote added successfully!";
+    successMessage.style.color = "green";
+    quoteDisplay.innerHTML = "";
+    quoteDisplay.appendChild(successMessage);
   } else {
-    alert("Please enter a quote.");
+    let errorMessage = document.createElement("p");
+    errorMessage.innerHTML = "Please enter a quote.";
+    errorMessage.style.color = "red";
+    quoteDisplay.innerHTML = "";
+    quoteDisplay.appendChild(errorMessage);
   }
 };
-document.addEventListener("click", createAddQuoteForm);
+
+document
+  .getElementById("addQuoteButton")
+  .addEventListener("click", createAddQuoteForm);
