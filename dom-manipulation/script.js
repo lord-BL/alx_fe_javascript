@@ -113,14 +113,14 @@ const fetchQuotesFromServer = async () => {
       category: index % 2 === 0 ? "motivation" : "inspiration",
     }));
 
-    handleDataSync(serverData);
+    syncQuotes(serverData);
   } catch (error) {
     console.error("Error fetching data from server:", error);
   }
 };
 
 // Sync local data with server data and handle conflicts
-const handleDataSync = (serverData) => {
+const syncQuotes = (serverData) => {
   const conflicts = [];
   const updatedQuotes = [...quotes];
 
