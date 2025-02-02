@@ -154,6 +154,28 @@ const handleDataSync = (serverData) => {
   }
 };
 
+// POST request to send new quotes to the server
+const sendQuoteToServer = async (quote) => {
+  try {
+    const response = await fetch("https://jsonplaceholder.typicode.com/posts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        title: quote.text, // Mocking the server quote structure
+        body: quote.text, // Simulate posting the quote
+        userId: 1, // A static userId for simulation
+      }),
+    });
+
+    const result = await response.json();
+    console.log("Quote successfully posted to the server:", result);
+  } catch (error) {
+    console.error("Error posting data to server:", error);
+  }
+};
+
 // Periodically fetch data from the server every 5 minutes
 setInterval(fetchQuotesFromServer, 5 * 60 * 1000);
 
@@ -174,6 +196,10 @@ document.getElementById("addQuoteButton").addEventListener("click", () => {
     successMessage.style.color = "green";
     quoteDisplay.innerHTML = "";
     quoteDisplay.appendChild(successMessage);
+
+    // Send the new quote to the server as well
+    sendQuoteToServer({ text: quote });
+
     populateCategories(); // Update category filter after adding a new quote
   } else {
     let errorMessage = document.createElement("p");
