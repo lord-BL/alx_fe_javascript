@@ -1,5 +1,6 @@
 const newQuote = document.getElementById("newQuote");
-const quotes = [
+const importFile = document.getElementById("importFile");
+const quotes = JSON.parse(localStorage.getItem("quotes")) || [
   {
     text: "The only way to do great work is to love what you do.",
     category: "motivation",
@@ -42,6 +43,10 @@ const quotes = [
   },
 ];
 
+const saveQuotes = () => {
+  localStorage.setItem("quotes", JSON.stringify(quotes));
+};
+
 const showRandomQuote = () => {
   let randomIndex = Math.floor(Math.random() * quotes.length);
   let quoteDisplay = document.getElementById("quoteDisplay");
@@ -50,17 +55,20 @@ const showRandomQuote = () => {
   let quoteElement = document.createElement("p");
   quoteElement.innerHTML = quotes[randomIndex].text;
   quoteDisplay.appendChild(quoteElement);
+
+  sessionStorage.setItem("lastViewedQuote", quotes[randomIndex].text);
 };
 
 newQuote.addEventListener("click", showRandomQuote);
 
-const createAddQuoteForm = () => {
+document.getElementById("addQuoteButton").addEventListener("click", () => {
   let getQuotes = document.getElementById("textarea");
   let quote = getQuotes.value.trim();
   let quoteDisplay = document.getElementById("quoteDisplay");
 
   if (quote) {
     quotes.push({ text: quote, category: "custom" });
+    saveQuotes();
     getQuotes.value = "";
 
     let successMessage = document.createElement("p");
@@ -75,8 +83,28 @@ const createAddQuoteForm = () => {
     quoteDisplay.innerHTML = "";
     quoteDisplay.appendChild(errorMessage);
   }
-};
+});
 
-document
-  .getElementById("addQuoteButton")
-  .addEventListener("click", createAddQuoteForm);
+document.getElementById("exportButton").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(quotes, null, 2)], {
+    type: "application/json",
+  });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "quotes.json";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+});
+
+importFile.addEventListener("change", (event) => {
+  const fileReader = new FileReader();
+  fileReader.onload = function (event) {
+    const importedQuotes = JSON.parse(event.target.result);
+    quotes.push(...importedQuotes);
+    saveQuotes();
+    alert("Quotes imported successfully!");
+  };
+  fileReader.readAsText(event.target.files[0]);
+});
